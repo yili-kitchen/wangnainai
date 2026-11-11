@@ -1,0 +1,519 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>王奶奶水餃團購 後台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pine:#1f5c46; --pine-d:#164433; --pine-l:#e7f1ec;
+  --amber:#e0932b; --amber-l:#fdf2e2; --ink:#1d2622; --muted:#6b7772; --line:#e3e8e5;
+  --bg:#f3f4f2; --card:#fff; --danger:#c8432f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans TC",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.demo{background:#fff3cd;color:#7a5a00;font-size:12px;text-align:center;padding:4px}
+
+.top{background:var(--pine);color:#fff}
+.top .wrap{display:flex;align-items:center;gap:12px;height:58px}
+.top h1{font-size:18px;font-weight:900;letter-spacing:.05em;flex:1}
+.top h1 small{font-weight:400;opacity:.7;font-size:13px;margin-left:6px}
+.top button{background:rgba(255,255,255,.14);border:none;color:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:14px}
+
+.tabs{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+.tabs .wrap{display:flex;gap:4px}
+.tabs button{border:none;background:none;padding:12px 14px;font-weight:500;color:var(--muted);border-bottom:3px solid transparent;cursor:pointer}
+.tabs button.on{color:var(--pine-d);border-color:var(--pine)}
+
+.card{background:var(--card);border-radius:14px;padding:16px 18px;margin-top:16px}
+.card h2{font-size:16px;margin-bottom:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card h2 .sp{flex:1}
+
+.datebar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.datebar label{font-size:14px;color:var(--muted)}
+input[type=date],select,.inp{padding:9px 12px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font-size:15px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:13px;font-weight:500}
+.chip.open{background:var(--pine-l);color:var(--pine-d)}
+.chip.closed{background:#fdecea;color:var(--danger)}
+.datechips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.dchip{display:inline-flex;align-items:center;gap:8px;background:var(--pine-l);color:var(--pine-d);border-radius:10px;padding:7px 8px 7px 12px;font-weight:500}
+.dchip.past{background:var(--bg);color:var(--muted);text-decoration:line-through}
+.dchip small{font-weight:400;font-size:12px;color:var(--muted);text-decoration:none}
+.dchip button{border:none;background:rgba(0,0,0,.06);width:24px;height:24px;border-radius:50%;cursor:pointer;line-height:1}
+
+.btn{background:var(--pine);color:#fff;border:none;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;font-size:14px;white-space:nowrap}
+.btn.amber{background:var(--amber)}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:5px 10px;font-size:13px;border-radius:8px}
+.btn.danger{background:#fff;color:var(--danger);border:1.5px solid #f1c7c0}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.kpi{background:#fff;border-radius:14px;padding:12px 14px}
+.kpi small{color:var(--muted);font-size:13px}
+.kpi b{display:block;font-size:24px;font-weight:900;color:var(--pine-d)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.stat{border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;position:relative}
+.stat .n{font-weight:700}
+.stat .q{font-size:34px;font-weight:900;color:var(--pine);line-height:1.1}
+.stat .q small{font-size:14px;font-weight:500;color:var(--muted);margin-left:4px}
+.stat .sub{font-size:12px;color:var(--muted)}
+.stat .barbg{height:5px;background:var(--pine-l);border-radius:3px;margin-top:8px;overflow:hidden}
+.stat .barbg i{display:block;height:100%;background:var(--pine)}
+.empty{color:var(--muted);text-align:center;padding:24px 0;font-size:14px}
+
+.slotstats{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.slotstats span{background:var(--bg);border-radius:8px;padding:4px 10px;font-size:13px}
+.slotstats b{color:var(--pine-d)}
+
+.filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.seg{display:inline-flex;background:var(--bg);border-radius:10px;padding:3px}
+.seg button{border:none;background:none;padding:6px 12px;border-radius:8px;font-size:14px;cursor:pointer;color:var(--muted)}
+.seg button.on{background:#fff;color:var(--ink);font-weight:700;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.filters .inp{flex:1;min-width:160px}
+
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:500;color:var(--muted);font-size:13px;padding:8px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+td{padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.picked td{background:#f8faf9;color:var(--muted)}
+td .nm{font-weight:700;color:var(--ink)}
+td .oid{font-size:12px;color:var(--muted)}
+td a{color:var(--pine);text-decoration:none}
+td .note{font-size:12px;color:#7a4f12;background:var(--amber-l);border-radius:6px;padding:2px 6px;margin-top:4px;display:inline-block}
+.pickbtn{min-width:96px}
+.pickbtn.done{background:var(--pine-l);color:var(--pine-d)}
+td input[type=date]{padding:4px 6px;font-size:13px;border-radius:8px}
+.acts{display:flex;gap:6px;align-items:center}
+
+.prow{display:grid;grid-template-columns:1.5fr .6fr .5fr 1.3fr 1.4fr auto auto;gap:8px;align-items:center;margin-bottom:8px}
+.prow input{width:100%}
+.prow .hd{font-size:12px;color:var(--muted)}
+.pdl .mlabel{display:none;font-size:12px;color:var(--muted)}
+.switch{display:flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap}
+
+.login{max-width:360px;margin:12vh auto 0;background:#fff;border-radius:16px;padding:28px 24px;text-align:center}
+.login h1{font-size:22px;color:var(--pine-d);margin-bottom:4px}
+.login p{color:var(--muted);font-size:14px;margin-bottom:18px}
+.login input{width:100%;margin-bottom:12px}
+.login .btn{width:100%;padding:12px}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:30;display:none}
+.muted{color:var(--muted);font-size:13px}
+[hidden]{display:none!important}
+
+@media (max-width:720px){
+  .kpis{grid-template-columns:repeat(2,1fr)}
+  table thead{display:none}
+  table,tbody,tr,td{display:block;width:100%}
+  tr{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;padding:8px 10px;background:#fff}
+  tr.picked{background:#f8faf9}
+  td{border:none;padding:4px 0}
+  td[data-l]::before{content:attr(data-l);display:inline-block;width:72px;color:var(--muted);font-size:12px}
+  .prow{grid-template-columns:1fr 1fr;padding:10px;border:1px solid var(--line);border-radius:10px}
+  .prow .hd{display:none}
+  .prow .pdesc,.prow .pdl{grid-column:1/-1}
+  .prow .mlabel{display:block}
+}
+</style>
+</head>
+<body>
+<div id="demoBar" class="demo" hidden>示範模式（尚未設定 API_URL，資料只存在這台裝置的瀏覽器）· 示範密碼：wang888</div>
+
+<!-- 登入 -->
+<div id="loginView" class="wrap" hidden>
+  <div class="login">
+    <h1>王奶奶水餃團購</h1>
+    <p>後台管理登入</p>
+    <input class="inp" id="pw" type="password" placeholder="請輸入後台密碼" autocomplete="current-password">
+    <button class="btn" id="loginBtn">登入</button>
+  </div>
+</div>
+
+<!-- 主畫面 -->
+<div id="appView" hidden>
+  <div class="top"><div class="wrap">
+    <h1>王奶奶水餃團購<small>後台</small></h1>
+    <button id="refreshBtn">↻ 重新整理</button>
+    <button id="logoutBtn">登出</button>
+  </div></div>
+  <nav class="tabs"><div class="wrap">
+    <button data-tab="orders" class="on">訂單與統計</button>
+    <button data-tab="settings">開團日期 / 設定</button>
+    <button data-tab="products">商品管理</button>
+  </div></nav>
+
+  <main class="wrap" style="padding-bottom:40px">
+    <!-- 訂單與統計 -->
+    <section id="tab-orders">
+      <div class="card">
+        <div class="datebar">
+          <label for="viewDate">查看發貨日期</label>
+          <select id="viewDate"></select>
+          <span id="openChip"></span>
+          <span class="muted" id="updatedAt"></span>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><small>訂單數</small><b id="kOrders">0</b></div>
+        <div class="kpi"><small>總件數</small><b id="kQty">0</b></div>
+        <div class="kpi"><small>總金額</small><b id="kAmt">$0</b></div>
+        <div class="kpi"><small>已取貨 / 未取貨</small><b id="kPick">0 / 0</b></div>
+      </div>
+
+      <div class="card">
+        <h2>📦 品項數量統計 <span class="sp"></span>
+          <button class="btn amber sm" id="copyBtn">複製訂貨清單</button></h2>
+        <div class="stats" id="stats"></div>
+        <div class="slotstats" id="slotStats"></div>
+      </div>
+
+      <div class="card">
+        <h2>🧾 訂單列表</h2>
+        <div class="filters">
+          <div class="seg" id="statusSeg">
+            <button data-s="all" class="on">全部</button>
+            <button data-s="未取貨">未取貨</button>
+            <button data-s="已取貨">已取貨</button>
+          </div>
+          <input class="inp" id="search" placeholder="搜尋群組名稱、手機末碼、訂單編號">
+          <select id="sortSel">
+            <option value="time">依取貨時間</option>
+            <option value="created">依下單時間</option>
+          </select>
+        </div>
+        <table>
+          <thead><tr><th>群組名稱 / 手機</th><th>取貨時間</th><th>品項</th><th>金額</th><th>發貨日期</th><th>取貨狀態</th><th></th></tr></thead>
+          <tbody id="orderRows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 發貨日期 / 開團設定 -->
+    <section id="tab-settings" hidden>
+      <div class="card">
+        <h2>🚚 開團日期選項</h2>
+        <p class="muted" style="margin-bottom:10px">在這裡新增這一團可以選的日期，客人下單時會從下拉選單選其中一天。過期的日期客人看不到；刪除日期不會影響已經下的訂單。記得按下方「儲存設定」。</p>
+        <div class="datebar">
+          <input type="date" id="newDate">
+          <button class="btn sm" id="addDateBtn">＋ 新增日期</button>
+        </div>
+        <div class="datechips" id="dateChips"></div>
+      </div>
+      <div class="card">
+        <h2>🟢 收單狀態</h2>
+        <div class="seg" id="openSeg">
+          <button data-v="true">開團收單中</button>
+          <button data-v="false">已結單</button>
+        </div>
+        <p class="muted" style="margin-top:8px">結單後客人頁面會顯示「已結單」，無法再送出訂單。</p>
+      </div>
+      <div class="card">
+        <h2>📢 公告（顯示在客人頁面）</h2>
+        <textarea class="inp" id="setNotice" rows="3" style="width:100%" maxlength="500" placeholder="例如：本週新品上架！取貨地點：OO 路 OO 號"></textarea>
+      </div>
+      <div style="margin-top:16px"><button class="btn" id="saveSettingsBtn">儲存設定</button></div>
+    </section>
+
+    <!-- 商品管理 -->
+    <section id="tab-products" hidden>
+      <div class="card">
+        <h2>🛒 商品管理 <span class="sp"></span><button class="btn ghost sm" id="addProdBtn">＋ 新增商品</button></h2>
+        <div class="prow"><span class="hd">品名</span><span class="hd">價格</span><span class="hd">單位</span><span class="hd">說明（選填）</span><span class="hd">截止預訂（空白＝不截止）</span><span class="hd">上架</span><span></span></div>
+        <div id="prodRows"></div>
+        <p class="muted" style="margin-top:6px">下架的商品不會出現在客人頁面，但舊訂單的統計不受影響。</p>
+      </div>
+      <div style="margin-top:16px"><button class="btn" id="saveProdBtn">儲存商品</button></div>
+    </section>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== 設定：貼上 Apps Script 部署後的網址（與 index.html 相同） ===== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbwp8P_38V90eCTKCPDE-65bocwRxlN0aT05tOgNOpdViJ9Ji-S9_zjjz6j5H9zem_k_aQ/exec';   // ← 部署王奶奶自己的 Apps Script 網址後貼在這裡
+/* =================================================================== */
+
+const MENU_DEMO=[{id:'p01',name:'高麗菜水餃',price:220,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p02',name:'韭菜水餃',price:220,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p03',name:'玉米水餃',price:220,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p04',name:'素食水餃',price:250,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p05',name:'蔥肉水餃',price:250,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p06',name:'絲瓜水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p07',name:'剝皮辣椒水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p08',name:'香菜水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p09',name:'雞肉水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p10',name:'鮮脆竹筍水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p11',name:'鮮蝦水餃',price:350,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p12',name:'牛肉水餃',price:350,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p13',name:'手工餛飩',price:150,unit:'份',desc:'30顆/份，附2包油蔥酥',active:true,deadline:'2026-11-29T12:00'},{id:'p14',name:'紅油炒手',price:150,unit:'份',desc:'20顆/份，附2包紅油醬＋2包紫菜',active:true,deadline:'2026-11-29T12:00'},{id:'p15',name:'彩色水餃（早鳥）',price:269,unit:'包',desc:'40顆/包，五色各8顆（高麗菜・韭菜・玉米）',active:true,deadline:'2026-11-29T12:00'},{id:'p16',name:'彩色餛飩（早鳥）',price:169,unit:'包',desc:'20顆/包，附紅油2包＋紫菜2包',active:true,deadline:'2026-11-29T12:00'}];
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+const money = n => '$' + Number(n||0).toLocaleString('zh-TW');
+const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const WEEK='日一二三四五六';
+const todayStr = () => new Date().toLocaleDateString('sv');
+function dlTag(id){ const p=S.products.find(x=>x.id===id); if(!p||!p.deadline) return '';
+  const closed = new Date().toLocaleString('sv').slice(0,16).replace(' ','T') >= p.deadline;
+  return ` <span class="chip ${closed?'closed':'open'}" style="font-size:11px;padding:1px 7px">${closed?'已截止':'截止 '+esc(p.deadline.slice(5).replace('-','/').replace('T',' '))}</span>`; }
+const openDates = () => (S.settings.shipDates||[]).filter(d=>d>=todayStr());
+function fmtDate(d){ if(!d) return '未設定日期'; const t=new Date(d+'T00:00:00'); if(isNaN(t)) return d; return `${t.getMonth()+1}/${t.getDate()}（${WEEK[t.getDay()]}）`; }
+function toast(m){ const t=$('#toast'); t.textContent=m; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',2400); }
+let PW=''; try{ PW=sessionStorage.getItem('wang_pw')||''; }catch(e){}
+
+/* ---------- API ---------- */
+async function api(action, payload={}){
+  if(!API_URL) return demoApi(action, payload);
+  let res, j;
+  try{ res = await fetch(API_URL, {method:'POST', body: JSON.stringify({action, password:PW, ...payload})}); }
+  catch(e){ throw new Error('連不到後端：請確認 Apps Script 已部署新版本，且「誰可以存取」設為「所有人」'); }
+  const txt = await res.text();
+  try{ j = JSON.parse(txt); }
+  catch(e){ throw new Error(/doPost|doGet/.test(txt) ? '後端尚未部署程式碼：請在 Apps Script 儲存後，部署新版本' : '後端回應異常：請直接打開 Apps Script 網址檢查'); }
+  if(!j.ok) throw new Error(j.error || '發生錯誤');
+  return j.data;
+}
+const SLOTS=['16:00-17:00','17:00-18:00','18:00-19:00','19:00-20:00'];
+function demoDb(){
+  let d; try{ d=JSON.parse(localStorage.getItem('wang_demo')); }catch(e){}
+  if(!d){ const t=new Date(); t.setDate(t.getDate()+3);
+    d={settings:{shipDates:['2026-12-06'],isOpen:true,notice:'這是示範資料，設定 API_URL 後會換成真正的商品。'},
+       products:MENU_DEMO,orders:[]}; }
+  if(!d.settings.shipDates) d.settings.shipDates = d.settings.shipDate ? [d.settings.shipDate] : [];
+  return d;
+}
+function demoSave(d){ try{ localStorage.setItem('wang_demo', JSON.stringify(d)); }catch(e){} }
+async function demoApi(action, b){
+  await new Promise(r=>setTimeout(r,200));
+  if(PW!=='wang888') throw new Error('密碼錯誤');
+  const d=demoDb(), find=id=>{ const o=d.orders.find(x=>x.orderId===id); if(!o) throw new Error('找不到這筆訂單'); return o; };
+  switch(action){
+    case 'login': return true;
+    case 'adminData': return {settings:d.settings, products:d.products, orders:d.orders, slots:SLOTS};
+    case 'setPicked': { const o=find(b.orderId); o.status=b.picked?'已取貨':'未取貨'; o.pickedAt=b.picked?new Date().toLocaleString('sv').slice(0,19):''; break; }
+    case 'setOrderShipDate': find(b.orderId).shipDate=b.shipDate||''; break;
+    case 'deleteOrder': d.orders=d.orders.filter(o=>o.orderId!==b.orderId); break;
+    case 'saveSettings': d.settings={shipDates:[...new Set(b.settings.shipDates||[])].sort(),isOpen:b.settings.isOpen!==false,notice:b.settings.notice||''}; demoSave(d); return d.settings;
+    case 'saveProducts': d.products=b.products.filter(p=>String(p.name||'').trim()).map((p,i)=>({...p,id:p.id||('p'+Date.now()+i),price:Number(p.price)||0})); demoSave(d); return d.products;
+    default: throw new Error('未知的動作');
+  }
+  demoSave(d); return true;
+}
+
+/* ---------- 狀態 ---------- */
+const S = { settings:{}, products:[], orders:[], slots:SLOTS, viewDate:null, status:'all', q:'', sort:'time', editProducts:[], editDates:[] };
+
+async function refresh(silent){
+  try{
+    const d = await api('adminData');
+    Object.assign(S, {settings:d.settings, products:d.products, orders:d.orders, slots:d.slots||SLOTS});
+    if(S.viewDate===null) S.viewDate = openDates()[0] || '__all';
+    if(!S.loaded){ S.loaded=true; S.editProducts=S.products.map(p=>({...p})); renderProdEditor(); }
+    $('#updatedAt').textContent = '更新於 ' + new Date().toTimeString().slice(0,5);
+    renderAll();
+  }catch(e){
+    if(/密碼/.test(e.message)) return logout();
+    if(!silent) toast('讀取失敗：'+e.message);
+  }
+}
+
+function renderAll(){ renderDateSel(); renderOrdersTab(); renderSettings(); }
+
+function renderDateSel(){
+  const dates = [...new Set(S.orders.map(o=>o.shipDate).concat(S.settings.shipDates||[]))]
+    .sort().reverse();
+  const opts = dates.map(d=>{
+    const n=S.orders.filter(o=>o.shipDate===d).length;
+    return `<option value="${esc(d)}">${esc(fmtDate(d))}${openDates().includes(d)?' ★開放中':''}（${n} 筆）</option>`;
+  });
+  opts.push(`<option value="__all">全部日期（${S.orders.length} 筆）</option>`);
+  $('#viewDate').innerHTML = opts.join('');
+  if(![...dates,'__all'].includes(S.viewDate)) S.viewDate = dates[0] || '__all';
+  $('#viewDate').value = S.viewDate;
+  $('#openChip').innerHTML = S.settings.isOpen ? '<span class="chip open">● 收單中</span>' : '<span class="chip closed">● 已結單</span>';
+}
+
+function ordersInView(){ return S.orders.filter(o => S.viewDate==='__all' || o.shipDate===(S.viewDate==='' ? '' : S.viewDate)); }
+
+function computeStats(list){
+  const map = new Map();
+  list.forEach(o => (o.items||[]).forEach(i=>{
+    const k=i.id+'|'+i.name;
+    const m=map.get(k)||{id:i.id, name:i.name, unit:i.unit||'', qty:0, waiting:0, amount:0};
+    m.qty+=i.qty; m.amount+=i.qty*i.price; if(o.status!=='已取貨') m.waiting+=i.qty;
+    map.set(k,m);
+  }));
+  // 依商品管理的順序排列，舊商品排後面
+  const order = S.products.map(p=>p.name);
+  return [...map.values()].sort((a,b)=>{
+    const ia=order.indexOf(a.name), ib=order.indexOf(b.name);
+    return (ia<0?999:ia)-(ib<0?999:ib) || b.qty-a.qty;
+  });
+}
+
+function renderOrdersTab(){
+  const list = ordersInView();
+  const picked = list.filter(o=>o.status==='已取貨').length;
+  $('#kOrders').textContent = list.length;
+  $('#kQty').textContent = list.reduce((s,o)=>s+o.totalQty,0);
+  $('#kAmt').textContent = money(list.reduce((s,o)=>s+o.total,0));
+  $('#kPick').textContent = `${picked} / ${list.length-picked}`;
+
+  const stats = computeStats(list), max = Math.max(1,...stats.map(s=>s.qty));
+  $('#stats').innerHTML = stats.length ? stats.map(s=>`
+    <div class="stat">
+      <div class="n">${esc(s.name)}${dlTag(s.id)}</div>
+      <div class="q">${s.qty}<small>${esc(s.unit)}</small></div>
+      <div class="sub">待取貨 ${s.waiting} · 小計 ${money(s.amount)}</div>
+      <div class="barbg"><i style="width:${s.qty/max*100}%"></i></div>
+    </div>`).join('') : '<div class="empty">這個發貨日期還沒有訂單</div>';
+
+  const slotCount = {}; list.forEach(o=>slotCount[o.pickupTime]=(slotCount[o.pickupTime]||0)+1);
+  $('#slotStats').innerHTML = list.length ? '<span class="muted" style="background:none;padding-left:0">各時段取貨人數：</span>' +
+    S.slots.filter(s=>slotCount[s]).map(s=>`<span>${s} <b>${slotCount[s]}</b> 人</span>`).join('') : '';
+
+  let rows = list.filter(o => S.status==='all' || o.status===S.status);
+  const q = S.q.trim().toLowerCase();
+  if(q) rows = rows.filter(o => (o.name+' '+o.phone+' '+o.orderId).toLowerCase().includes(q));
+  rows.sort(S.sort==='time' ? (a,b)=>(a.pickupTime.localeCompare(b.pickupTime)||a.createdAt.localeCompare(b.createdAt))
+                            : (a,b)=>b.createdAt.localeCompare(a.createdAt));
+  $('#orderRows').innerHTML = rows.length ? rows.map(o=>{
+    const done = o.status==='已取貨';
+    return `<tr class="${done?'picked':''}" data-id="${esc(o.orderId)}">
+      <td><div class="nm">${esc(o.name)}</div><a href="tel:${esc(o.phone)}">${esc(o.phone)}</a><div class="oid">${esc(o.orderId)} · ${esc(o.createdAt.slice(5,16))}</div></td>
+      <td data-l="取貨時間"><b>${esc(o.pickupTime)}</b></td>
+      <td data-l="品項">${(o.items||[]).map(i=>`${esc(i.name)} × <b>${i.qty}</b>`).join('<br>')}${o.note?`<br><span class="note">備註：${esc(o.note)}</span>`:''}</td>
+      <td data-l="金額"><b>${money(o.total)}</b></td>
+      <td data-l="發貨日期"><input type="date" class="shipIn" value="${esc(o.shipDate)}"></td>
+      <td data-l="取貨狀態"><button class="btn sm pickbtn ${done?'done':''}">${done?'✓ 已取貨':'標記已取貨'}</button>${done&&o.pickedAt?`<div class="oid">${esc(o.pickedAt.slice(5,16))}</div>`:''}</td>
+      <td><button class="btn sm danger delbtn">刪除</button></td>
+    </tr>`;}).join('') : '<tr><td colspan="7"><div class="empty">沒有符合的訂單</div></td></tr>';
+}
+
+/* 列表操作（先更新畫面，再寫入後端） */
+$('#orderRows').addEventListener('click', async e=>{
+  const tr=e.target.closest('tr[data-id]'); if(!tr) return;
+  const o=S.orders.find(x=>x.orderId===tr.dataset.id); if(!o) return;
+  if(e.target.closest('.pickbtn')){
+    const picked = o.status!=='已取貨', prev={status:o.status, pickedAt:o.pickedAt};
+    o.status = picked?'已取貨':'未取貨'; o.pickedAt = picked?new Date().toLocaleString('sv').slice(0,19):'';
+    renderOrdersTab();
+    try{ await api('setPicked',{orderId:o.orderId,picked}); toast(picked?`${o.name} 已取貨`:'已改回未取貨'); }
+    catch(err){ Object.assign(o,prev); renderOrdersTab(); toast('更新失敗：'+err.message); }
+  }
+  if(e.target.closest('.delbtn')){
+    if(!confirm(`確定刪除「${o.name}」的訂單？\n${o.itemsText||''}\n刪除後無法復原。`)) return;
+    try{ await api('deleteOrder',{orderId:o.orderId}); S.orders=S.orders.filter(x=>x!==o); renderAll(); toast('已刪除'); }
+    catch(err){ toast('刪除失敗：'+err.message); }
+  }
+});
+$('#orderRows').addEventListener('change', async e=>{
+  if(!e.target.classList.contains('shipIn')) return;
+  const tr=e.target.closest('tr'); const o=S.orders.find(x=>x.orderId===tr.dataset.id); const prev=o.shipDate;
+  o.shipDate=e.target.value;
+  try{ await api('setOrderShipDate',{orderId:o.orderId, shipDate:o.shipDate}); toast(`已改到 ${fmtDate(o.shipDate)} 發貨`); renderAll(); }
+  catch(err){ o.shipDate=prev; e.target.value=prev; toast('更新失敗：'+err.message); }
+});
+
+$('#viewDate').onchange=e=>{ S.viewDate=e.target.value; renderOrdersTab(); };
+$('#statusSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; S.status=b.dataset.s; $$('#statusSeg button').forEach(x=>x.classList.toggle('on',x===b)); renderOrdersTab(); };
+$('#search').oninput=e=>{ S.q=e.target.value; renderOrdersTab(); };
+$('#sortSel').onchange=e=>{ S.sort=e.target.value; renderOrdersTab(); };
+
+$('#copyBtn').onclick=async()=>{
+  const list=ordersInView(), stats=computeStats(list);
+  if(!stats.length) return toast('沒有可複製的品項');
+  const title = S.viewDate==='__all' ? '全部日期' : fmtDate(S.viewDate);
+  const text = `【王奶奶水餃團購】${title} 訂貨清單\n` + stats.map(s=>`${s.name}：${s.qty}${s.unit}`).join('\n') +
+    `\n—\n共 ${list.length} 筆訂單，總金額 ${money(list.reduce((t,o)=>t+o.total,0))}`;
+  try{ await navigator.clipboard.writeText(text); toast('已複製，可以直接貼給廠商'); }
+  catch(e){ prompt('請手動複製：', text); }
+};
+
+/* ---------- 設定 ---------- */
+let setOpen = true;
+function renderSettings(){
+  if(document.activeElement && $('#tab-settings').contains(document.activeElement)) return;
+  S.editDates = [...(S.settings.shipDates||[])]; renderDateChips();
+  $('#setNotice').value = S.settings.notice||'';
+  setOpen = S.settings.isOpen !== false; paintOpen();
+}
+function paintOpen(){ $$('#openSeg button').forEach(b=>b.classList.toggle('on', (b.dataset.v==='true')===setOpen)); }
+$('#openSeg').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; setOpen=b.dataset.v==='true'; paintOpen(); };
+function renderDateChips(){
+  const t=todayStr();
+  $('#dateChips').innerHTML = S.editDates.length ? S.editDates.map(d=>{
+    const n=S.orders.filter(o=>o.shipDate===d).length;
+    return `<span class="dchip ${d<t?'past':''}">${esc(fmtDate(d))}<small>${n} 筆</small><button data-d="${esc(d)}" aria-label="刪除">×</button></span>`;
+  }).join('') : '<span class="muted">還沒有日期，請先新增</span>';
+}
+$('#addDateBtn').onclick=()=>{
+  const v=$('#newDate').value; if(!v) return toast('請先選擇日期');
+  if(S.editDates.includes(v)) return toast('這個日期已經有了');
+  if(v<todayStr() && !confirm('這是過去的日期，客人看不到，確定要新增？')) return;
+  S.editDates.push(v); S.editDates.sort(); renderDateChips(); $('#newDate').value='';
+};
+$('#dateChips').onclick=e=>{ const b=e.target.closest('button[data-d]'); if(!b) return; S.editDates=S.editDates.filter(d=>d!==b.dataset.d); renderDateChips(); };
+$('#saveSettingsBtn').onclick=async e=>{
+  if(!S.loaded) return toast('資料載入中，請稍候');
+  e.target.disabled=true;
+  try{
+    S.settings = await api('saveSettings',{settings:{shipDates:S.editDates, isOpen:setOpen, notice:$('#setNotice').value}});
+    S.viewDate = openDates()[0] || '__all';
+    renderAll(); toast('設定已儲存');
+  }catch(err){ toast('儲存失敗：'+err.message); }
+  e.target.disabled=false;
+};
+
+/* ---------- 商品 ---------- */
+function renderProdEditor(){
+  $('#prodRows').innerHTML = S.editProducts.map((p,i)=>`
+    <div class="prow" data-i="${i}">
+      <input class="inp" data-k="name" value="${esc(p.name)}" placeholder="品名">
+      <input class="inp" data-k="price" type="number" min="0" value="${esc(p.price)}" placeholder="價格">
+      <input class="inp" data-k="unit" value="${esc(p.unit)}" placeholder="份">
+      <input class="inp pdesc" data-k="desc" value="${esc(p.desc)}" placeholder="說明">
+      <label class="pdl"><span class="mlabel">截止預訂</span><input class="inp" data-k="deadline" type="datetime-local" value="${esc(p.deadline||'')}"></label>
+      <label class="switch"><input type="checkbox" data-k="active" ${p.active!==false?'checked':''}> 上架</label>
+      <button class="btn sm danger" data-del>移除</button>
+    </div>`).join('') || '<div class="empty">還沒有商品，按「新增商品」開始</div>';
+}
+$('#prodRows').addEventListener('input', e=>{
+  const row=e.target.closest('.prow'); if(!row) return; const p=S.editProducts[row.dataset.i], k=e.target.dataset.k;
+  if(k) p[k] = k==='active' ? e.target.checked : e.target.value;
+});
+$('#prodRows').addEventListener('click', e=>{
+  if(!e.target.hasAttribute('data-del')) return;
+  const i=+e.target.closest('.prow').dataset.i; S.editProducts.splice(i,1); renderProdEditor();
+});
+$('#addProdBtn').onclick=()=>{ S.editProducts.push({id:'',name:'',price:'',unit:'份',desc:'',active:true,deadline:''}); renderProdEditor(); $('#prodRows .prow:last-child input').focus(); };
+$('#saveProdBtn').onclick=async e=>{
+  if(!S.loaded) return toast('資料載入中，請稍候');
+  const bad = S.editProducts.find(p=>String(p.name).trim() && !(Number(p.price)>=0 && p.price!==''));
+  if(bad) return toast(`「${bad.name}」請填價格`);
+  e.target.disabled=true;
+  try{ S.products = await api('saveProducts',{products:S.editProducts}); S.editProducts=S.products.map(p=>({...p})); renderProdEditor(); toast('商品已儲存'); }
+  catch(err){ toast('儲存失敗：'+err.message); }
+  e.target.disabled=false;
+};
+
+/* ---------- 分頁、登入 ---------- */
+$('.tabs').onclick=e=>{
+  const b=e.target.closest('button[data-tab]'); if(!b) return;
+  $$('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  ['orders','settings','products'].forEach(t=>$('#tab-'+t).hidden = t!==b.dataset.tab);
+  if(b.dataset.tab==='products'){ S.editProducts=S.products.map(p=>({...p})); renderProdEditor(); }
+  if(b.dataset.tab==='settings') renderSettings();
+};
+$('#refreshBtn').onclick=()=>refresh();
+async function login(){
+  PW = $('#pw').value; $('#loginBtn').disabled=true;
+  try{ await api('login'); try{ sessionStorage.setItem('wang_pw',PW); }catch(e){} showApp(); }
+  catch(e){ toast(e.message); }
+  $('#loginBtn').disabled=false;
+}
+function showApp(){ $('#loginView').hidden=true; $('#appView').hidden=false; refresh(); }
+function logout(){ PW=''; try{ sessionStorage.removeItem('wang_pw'); }catch(e){} $('#appView').hidden=true; $('#loginView').hidden=false; $('#pw').value=''; }
+$('#loginBtn').onclick=login;
+$('#pw').onkeydown=e=>{ if(e.key==='Enter') login(); };
+$('#logoutBtn').onclick=logout;
+
+if(!API_URL) $('#demoBar').hidden=false;
+if(PW) showApp(); else $('#loginView').hidden=false;
+setInterval(()=>{ if(!$('#appView').hidden && document.visibilityState==='visible' && !$('#tab-orders').hidden) refresh(true); }, 60000);
+</script>
+</body>
+</html>

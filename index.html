@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>王奶奶水餃團購</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pine:#1f5c46; --pine-d:#164433; --pine-l:#e7f1ec;
+  --amber:#e0932b; --ink:#1d2622; --muted:#6b7772; --line:#e3e8e5;
+  --bg:#f6f4ef; --card:#fff; --danger:#c8432f;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:"Noto Sans TC",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding-bottom:110px}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:560px;margin:0 auto;padding:0 16px}
+
+header{background:var(--pine);color:#fff;padding:28px 0 56px;position:relative;overflow:hidden}
+header::after{content:"";position:absolute;right:-40px;bottom:-60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.07)}
+.brand-sub{font-size:13px;letter-spacing:.2em;opacity:.75}
+h1{font-size:30px;font-weight:900;letter-spacing:.06em;margin-top:2px}
+
+.info{background:var(--card);border-radius:16px;margin-top:-36px;position:relative;z-index:1;padding:16px 18px;box-shadow:0 6px 24px rgba(20,50,38,.08);display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.info div small{display:block;font-size:12px;color:var(--muted)}
+.info div b{font-size:17px;color:var(--pine-d)}
+.notice{grid-column:1/-1;background:#fff7ea;border-radius:10px;padding:10px 12px;font-size:14px;color:#7a4f12;white-space:pre-wrap}
+.closed{grid-column:1/-1;background:#fdecea;color:var(--danger);border-radius:10px;padding:10px 12px;font-weight:700;text-align:center}
+
+h2{font-size:18px;font-weight:700;margin:28px 0 12px;display:flex;align-items:center;gap:8px}
+h2 span{width:6px;height:18px;background:var(--amber);border-radius:3px}
+
+.prod{background:var(--card);border-radius:14px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;border:2px solid transparent;transition:border-color .15s}
+.prod.on{border-color:var(--pine)}
+.prod.ended{opacity:.6;background:#f1f1ee}
+.prod .dl{display:inline-block;font-size:12px;color:#9a5b12;background:#fff3e0;border-radius:6px;padding:1px 7px;margin-top:3px}
+.prod.ended .dl{color:var(--muted);background:#e6e6e2}
+.prod .meta{flex:1;min-width:0}
+.prod .name{font-weight:700;font-size:16px}
+.prod .desc{font-size:13px;color:var(--muted)}
+.prod .price{color:var(--pine);font-weight:700}
+.step{display:flex;align-items:center;gap:4px}
+.step button{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--line);background:#fff;font-size:20px;line-height:1;cursor:pointer}
+.step button.plus{background:var(--pine);border-color:var(--pine);color:#fff}
+.step button:disabled{opacity:.35;cursor:not-allowed}
+.step input{width:44px;text-align:center;border:none;font-weight:700;font-size:17px;background:transparent}
+
+.field{margin-bottom:14px}
+.field label{display:block;font-size:14px;font-weight:500;margin-bottom:6px}
+.field label em{color:var(--danger);font-style:normal}
+.field input,.field select,.field textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-size:16px}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--pine)}
+.field .hint{font-size:12px;color:var(--muted);margin-top:4px}
+.field.err input,.field.err select{border-color:var(--danger)}
+.field .errmsg{display:none;font-size:12px;color:var(--danger);margin-top:4px}
+.field.err .errmsg{display:block}
+
+.field select{appearance:none;-webkit-appearance:none;padding-right:40px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231f5c46' stroke-width='3' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 14px center}
+.field select:invalid{color:var(--muted)}
+.field select option{color:var(--ink)}
+
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:12px 0 calc(12px + env(safe-area-inset-bottom));z-index:10}
+.bar .wrap{display:flex;align-items:center;gap:12px}
+.bar .sum{flex:1}
+.bar .sum small{color:var(--muted);font-size:13px}
+.bar .sum b{font-size:22px;color:var(--pine-d)}
+.btn{background:var(--amber);color:#fff;border:none;border-radius:999px;padding:13px 26px;font-weight:700;font-size:16px;cursor:pointer}
+.btn:disabled{background:#ccc;cursor:not-allowed}
+.btn.ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+
+.modal{position:fixed;inset:0;background:rgba(10,25,20,.5);display:none;align-items:flex-end;justify-content:center;z-index:20}
+.modal.show{display:flex}
+.sheet{background:#fff;width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:22px 20px calc(20px + env(safe-area-inset-bottom));max-height:90vh;overflow:auto}
+.sheet h3{font-size:19px;margin-bottom:12px}
+.rows{border-top:1px dashed var(--line);border-bottom:1px dashed var(--line);padding:10px 0;margin:10px 0}
+.rows div{display:flex;justify-content:space-between;padding:3px 0;font-size:15px}
+.kv{font-size:15px}
+.kv div{display:flex;gap:10px;padding:2px 0}
+.kv span{color:var(--muted);width:92px;flex-shrink:0}
+.sheet .actions{display:flex;gap:10px;margin-top:18px}
+.sheet .actions .btn{flex:1}
+.done{text-align:center}
+.done .ok{width:64px;height:64px;border-radius:50%;background:var(--pine-l);color:var(--pine);font-size:34px;display:flex;align-items:center;justify-content:center;margin:4px auto 10px}
+.done .oid{font-size:22px;font-weight:900;color:var(--pine-d);letter-spacing:.05em}
+.loading{text-align:center;color:var(--muted);padding:40px 0}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:999px;font-size:14px;z-index:30;display:none}
+.demo{background:#fff3cd;color:#7a5a00;font-size:12px;text-align:center;padding:4px}
+footer{text-align:center;color:var(--muted);font-size:12px;margin:30px 0 10px}
+</style>
+</head>
+<body>
+<div id="demoBar" class="demo" hidden>示範模式（尚未設定 API_URL，資料只存在這台裝置的瀏覽器）</div>
+<header><div class="wrap">
+  <div class="brand-sub">MRS. WANG · 手做水餃</div>
+  <h1>王奶奶水餃團購</h1>
+</div></header>
+
+<main class="wrap">
+  <section class="info" id="info">
+    <div><small>可預訂取貨日</small><b id="shipDate">—</b></div>
+    <div><small>取貨時間</small><b>16:00 – 20:00</b></div>
+  </section>
+
+  <h2><span></span>選擇商品</h2>
+  <div id="products"><div class="loading">商品載入中…</div></div>
+
+  <h2><span></span>訂購資料</h2>
+  <div class="field" id="f-name">
+    <label for="name">松義群組個人名稱 <em>*</em></label>
+    <input id="name" maxlength="40" placeholder="請填你在松義群組裡的名稱" autocomplete="nickname">
+    <div class="errmsg">請填寫群組個人名稱</div>
+  </div>
+  <div class="field" id="f-phone">
+    <label for="phone">手機號碼 <em>*</em></label>
+    <input id="phone" type="tel" inputmode="numeric" maxlength="12" placeholder="0912345678" autocomplete="tel">
+    <div class="errmsg">請輸入正確的手機號碼（09 開頭共 10 碼）</div>
+  </div>
+  <div class="field" id="f-date">
+    <label for="dateSel">取貨日期 <em>*</em></label>
+    <select id="dateSel" required><option value="">請選擇取貨日期</option></select>
+    <div class="errmsg">請選擇取貨日期</div>
+  </div>
+  <div class="field" id="f-slot">
+    <label for="slots">取貨時間 <em>*</em></label>
+    <select id="slots" required><option value="">請選擇取貨時段（16:00~20:00）</option></select>
+    <div class="errmsg">請選擇取貨時段</div>
+  </div>
+  <div class="field">
+    <label for="note">備註（選填）</label>
+    <textarea id="note" rows="2" maxlength="200" placeholder="有特別需求可以寫在這裡"></textarea>
+  </div>
+  <footer>王奶奶水餃團購 · 有問題請在群組私訊小編</footer>
+</main>
+
+<div class="bar"><div class="wrap">
+  <div class="sum"><small id="sumQty">尚未選購</small><br><b id="sumAmt">$0</b></div>
+  <button class="btn" id="submitBtn" disabled>確認訂單</button>
+</div></div>
+
+<div class="modal" id="confirmModal"><div class="sheet" id="confirmSheet"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ===== 設定：貼上 Apps Script 部署後的網址 ===== */
+const API_URL = 'https://script.google.com/macros/s/AKfycbwp8P_38V90eCTKCPDE-65bocwRxlN0aT05tOgNOpdViJ9Ji-S9_zjjz6j5H9zem_k_aQ/exec';   // ← 部署王奶奶自己的 Apps Script 網址後貼在這裡
+/* ============================================== */
+
+const MENU_DEMO=[{id:'p01',name:'高麗菜水餃',price:220,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p02',name:'韭菜水餃',price:220,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p03',name:'玉米水餃',price:220,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p04',name:'素食水餃',price:250,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p05',name:'蔥肉水餃',price:250,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p06',name:'絲瓜水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p07',name:'剝皮辣椒水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p08',name:'香菜水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p09',name:'雞肉水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p10',name:'鮮脆竹筍水餃',price:320,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p11',name:'鮮蝦水餃',price:350,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p12',name:'牛肉水餃',price:350,unit:'包',desc:'40顆/包',active:true,deadline:'2026-11-29T12:00'},{id:'p13',name:'手工餛飩',price:150,unit:'份',desc:'30顆/份，附2包油蔥酥',active:true,deadline:'2026-11-29T12:00'},{id:'p14',name:'紅油炒手',price:150,unit:'份',desc:'20顆/份，附2包紅油醬＋2包紫菜',active:true,deadline:'2026-11-29T12:00'},{id:'p15',name:'彩色水餃（早鳥）',price:269,unit:'包',desc:'40顆/包，五色各8顆（高麗菜・韭菜・玉米）',active:true,deadline:'2026-11-29T12:00'},{id:'p16',name:'彩色餛飩（早鳥）',price:169,unit:'包',desc:'20顆/包，附紅油2包＋紫菜2包',active:true,deadline:'2026-11-29T12:00'}];
+const $ = s => document.querySelector(s);
+const money = n => '$' + Number(n).toLocaleString('zh-TW');
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const WEEK = '日一二三四五六';
+function fmtDate(d){ if(!d) return '小編公告'; const t=new Date(d+'T00:00:00'); if(isNaN(t)) return d; return (t.getMonth()+1)+'/'+t.getDate()+'（'+WEEK[t.getDay()]+'）'; }
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.style.display='block'; clearTimeout(t._h); t._h=setTimeout(()=>t.style.display='none',2600); }
+
+/* ---------- API（未設定網址時使用瀏覽器內的示範資料） ---------- */
+async function api(action, payload={}){
+  if(!API_URL) return demoApi(action, payload);
+  let res, j;
+  try{ res = await fetch(API_URL, {method:'POST', body: JSON.stringify({action, ...payload})}); }
+  catch(e){ throw new Error('連不到後端：請確認 Apps Script 已部署新版本，且「誰可以存取」設為「所有人」'); }
+  const txt = await res.text();
+  try{ j = JSON.parse(txt); }
+  catch(e){ throw new Error(/doPost|doGet/.test(txt) ? '後端尚未部署程式碼：請在 Apps Script 儲存後，部署新版本' : '後端回應異常：請直接打開 Apps Script 網址檢查'); }
+  if(!j.ok) throw new Error(j.error || '發生錯誤');
+  return j.data;
+}
+const SLOTS=['16:00-17:00','17:00-18:00','18:00-19:00','19:00-20:00'];
+function demoDb(){
+  let d; try{ d=JSON.parse(localStorage.getItem('wang_demo')); }catch(e){}
+  if(!d){ const t=new Date(); t.setDate(t.getDate()+3);
+    d={settings:{shipDates:['2026-12-06'],isOpen:true,notice:'這是示範資料，設定 API_URL 後會換成真正的商品。'},
+       products:MENU_DEMO,orders:[]}; }
+  if(!d.settings.shipDates) d.settings.shipDates = d.settings.shipDate ? [d.settings.shipDate] : [];
+  return d;
+}
+const todayStr = () => new Date().toLocaleDateString('sv');
+const nowStr = () => new Date().toLocaleString('sv').slice(0,16).replace(' ','T');
+const isClosed = p => !!p.deadline && nowStr() >= p.deadline;
+function fmtDeadline(dl){ const [d,t]=dl.split('T'); const x=new Date(d+'T00:00:00'); return (x.getMonth()+1)+'/'+x.getDate()+'（'+WEEK[x.getDay()]+'）'+(t||''); }
+function demoSave(d){ try{ localStorage.setItem('wang_demo', JSON.stringify(d)); }catch(e){} }
+async function demoApi(action, b){
+  await new Promise(r=>setTimeout(r,250));
+  const d=demoDb();
+  if(action==='init') return {settings:{...d.settings, shipDates:d.settings.shipDates.filter(x=>x>=todayStr())}, products:d.products.filter(p=>p.active), slots:SLOTS};
+  if(action==='order'){
+    if(!d.settings.isOpen) throw new Error('本團已結單，暫停接受訂單');
+    if(!d.settings.shipDates.includes(b.shipDate) || b.shipDate<todayStr()) throw new Error('請選擇可預訂的取貨日期');
+    const items=b.items.map(it=>{const p=d.products.find(x=>x.id===it.id); if(isClosed(p)) throw new Error('「'+p.name+'」已截止預訂，請重新整理頁面'); return {id:p.id,name:p.name,price:p.price,unit:p.unit,qty:it.qty};});
+    const o={orderId:'WN'+Date.now().toString().slice(-10),createdAt:new Date().toLocaleString('sv').slice(0,19),shipDate:b.shipDate,
+      name:b.name,phone:b.phone,pickupTime:b.pickupTime,items,itemsText:items.map(i=>i.name+' x'+i.qty).join('、'),
+      totalQty:items.reduce((s,i)=>s+i.qty,0),total:items.reduce((s,i)=>s+i.qty*i.price,0),note:b.note||'',status:'未取貨',pickedAt:''};
+    d.orders.push(o); demoSave(d); return o;
+  }
+  throw new Error('未知的動作');
+}
+
+/* ---------- 頁面 ---------- */
+const state = { products:[], qty:{}, slot:'', date:'', settings:{} };
+
+async function load(){
+  if(!API_URL) $('#demoBar').hidden=false;
+  try{
+    const data = await api('init');
+    state.settings = data.settings; state.products = data.products;
+    renderInfo(); renderProducts(); renderDates(); renderSlots(data.slots || SLOTS);
+  }catch(e){
+    $('#products').innerHTML = '<div class="loading">讀取失敗，請重新整理頁面<br><small>'+esc(e.message)+'</small></div>';
+  }
+}
+function renderInfo(){
+  const s=state.settings;
+  const ds = s.shipDates||[];
+  $('#shipDate').textContent = !ds.length ? '暫無' : ds.length<=2 ? ds.map(shortDate).join('、') : `${shortDate(ds[0])} 起共 ${ds.length} 天`;
+  let extra='';
+  if(s.notice) extra += '<div class="notice">'+esc(s.notice)+'</div>';
+  if(!s.isOpen) extra += '<div class="closed">本團已結單，暫停接受訂單</div>';
+  else if(!ds.length) extra += '<div class="closed">目前沒有可預訂的日期，請留意群組公告</div>';
+  $('#info').insertAdjacentHTML('beforeend', extra);
+}
+function renderProducts(){
+  if(!state.products.length){ $('#products').innerHTML='<div class="loading">目前沒有開團商品</div>'; return; }
+  $('#products').innerHTML = state.products.map(p=>{ const closed=isClosed(p); return `
+    <div class="prod ${closed?'ended':''}" data-id="${esc(p.id)}">
+      <div class="meta">
+        <div class="name">${esc(p.name)}</div>
+        ${p.desc?`<div class="desc">${esc(p.desc)}</div>`:''}
+        <div class="price">${money(p.price)}${p.unit?' / '+esc(p.unit):''}</div>
+        ${p.deadline?`<div class="dl">${closed?'已截止預訂':'預訂截止 '+esc(fmtDeadline(p.deadline))}</div>`:''}
+      </div>
+      <div class="step">
+        <button class="minus" aria-label="減少" disabled>−</button>
+        <input type="number" inputmode="numeric" min="0" max="999" value="0" aria-label="數量" ${closed?'disabled':''}>
+        <button class="plus" aria-label="增加" ${closed?'disabled':''}>+</button>
+      </div>
+    </div>`;}).join('');
+  document.querySelectorAll('.prod').forEach(el=>{
+    const id=el.dataset.id, inp=el.querySelector('input');
+    const set=v=>{ v=Math.max(0,Math.min(999,Math.floor(Number(v)||0))); state.qty[id]=v; inp.value=v;
+      el.classList.toggle('on',v>0); el.querySelector('.minus').disabled=v<=0; updateSum(); };
+    el.querySelector('.minus').onclick=()=>set((state.qty[id]||0)-1);
+    el.querySelector('.plus').onclick=()=>set((state.qty[id]||0)+1);
+    inp.onchange=()=>set(inp.value);
+  });
+}
+function shortDate(d){ const t=new Date(d+'T00:00:00'); return isNaN(t)?d:(t.getMonth()+1)+'/'+t.getDate(); }
+function renderDates(){
+  const ds = state.settings.shipDates||[];
+  $('#dateSel').innerHTML = '<option value="">請選擇取貨日期</option>' + ds.map(d=>`<option value="${esc(d)}">${esc(fmtDate(d))}</option>`).join('');
+  if(ds.length===1){ $('#dateSel').value=ds[0]; state.date=ds[0]; }
+  $('#dateSel').onchange=e=>{ state.date=e.target.value; $('#f-date').classList.toggle('err',!state.date); };
+}
+function renderSlots(slots){
+  $('#slots').innerHTML = '<option value="">請選擇取貨時段（16:00~20:00）</option>' +
+    slots.map(s=>`<option value="${s}">${s.replace('-',' ~ ')}</option>`).join('');
+  $('#slots').onchange=e=>{ state.slot=e.target.value; $('#f-slot').classList.toggle('err',!state.slot); };
+}
+function cart(){ return state.products.filter(p=>state.qty[p.id]>0).map(p=>({...p,qty:state.qty[p.id]})); }
+function updateSum(){
+  const c=cart(); const q=c.reduce((s,i)=>s+i.qty,0), amt=c.reduce((s,i)=>s+i.qty*i.price,0);
+  $('#sumQty').textContent = q ? `共 ${c.length} 項 · ${q} 件` : '尚未選購';
+  $('#sumAmt').textContent = money(amt);
+  $('#submitBtn').disabled = !q || !state.settings.isOpen || !(state.settings.shipDates||[]).length;
+}
+
+function validate(){
+  const name=$('#name').value.trim(), phone=$('#phone').value.replace(/[\s-]/g,'');
+  const okName=!!name, okPhone=/^09\d{8}$/.test(phone), okDate=!!state.date, okSlot=!!state.slot;
+  $('#f-name').classList.toggle('err',!okName);
+  $('#f-phone').classList.toggle('err',!okPhone);
+  $('#f-date').classList.toggle('err',!okDate);
+  $('#f-slot').classList.toggle('err',!okSlot);
+  const firstBad=[!okName&&'#f-name',!okPhone&&'#f-phone',!okDate&&'#f-date',!okSlot&&'#f-slot'].find(Boolean);
+  if(firstBad){ document.querySelector(firstBad).scrollIntoView({behavior:'smooth',block:'center'}); return null; }
+  return {name, phone, shipDate:state.date, pickupTime:state.slot, note:$('#note').value.trim()};
+}
+
+function summaryHtml(info, items, total){
+  return `<div class="rows">${items.map(i=>`<div><span>${esc(i.name)} × ${i.qty}</span><span>${money(i.qty*i.price)}</span></div>`).join('')}
+    <div style="font-weight:700;margin-top:6px"><span>合計</span><span>${money(total)}</span></div></div>
+    <div class="kv">
+      <div><span>群組名稱</span>${esc(info.name)}</div>
+      <div><span>手機</span>${esc(info.phone)}</div>
+      <div><span>取貨日期</span>${esc(fmtDate(info.shipDate))}</div>
+      <div><span>取貨時間</span>${esc(info.pickupTime)}</div>
+      ${info.note?`<div><span>備註</span>${esc(info.note)}</div>`:''}
+    </div>`;
+}
+
+$('#submitBtn').onclick=()=>{
+  const info=validate(); if(!info) return;
+  const items=cart(), total=items.reduce((s,i)=>s+i.qty*i.price,0);
+  $('#confirmSheet').innerHTML = `<h3>確認訂單內容</h3>${summaryHtml(info,items,total)}
+    <div class="actions"><button class="btn ghost" id="cBack">返回修改</button><button class="btn" id="cGo">送出訂單</button></div>`;
+  $('#confirmModal').classList.add('show');
+  $('#cBack').onclick=()=>$('#confirmModal').classList.remove('show');
+  $('#cGo').onclick=async e=>{
+    e.target.disabled=true; e.target.textContent='送出中…';
+    try{
+      const o = await api('order', {...info, items: items.map(i=>({id:i.id, qty:i.qty}))});
+      try{ localStorage.setItem('wang_me', JSON.stringify({name:info.name, phone:info.phone})); }catch(_){}
+      $('#confirmSheet').innerHTML = `<div class="done"><div class="ok">✓</div><h3>訂購成功！</h3>
+        <div style="color:var(--muted);font-size:14px">訂單編號</div><div class="oid">${esc(o.orderId)}</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:4px">建議截圖保存，取貨時出示即可</div></div>
+        ${summaryHtml(o,o.items,o.total)}
+        <div class="actions"><button class="btn" id="cAgain">完成</button></div>`;
+      $('#cAgain').onclick=()=>location.reload();
+    }catch(err){
+      toast(err.message); e.target.disabled=false; e.target.textContent='送出訂單';
+    }
+  };
+};
+$('#confirmModal').onclick=e=>{ if(e.target.id==='confirmModal' && !$('#cAgain')) e.currentTarget.classList.remove('show'); };
+['name','phone'].forEach(id=>$('#'+id).addEventListener('input',()=>$('#f-'+id).classList.remove('err')));
+
+try{ const me=JSON.parse(localStorage.getItem('wang_me')); if(me){ $('#name').value=me.name||''; $('#phone').value=me.phone||''; } }catch(e){}
+load();
+</script>
+</body>
+</html>
