@@ -91,9 +91,9 @@ footer{text-align:center;color:var(--muted);font-size:12px;margin:30px 0 10px}
 </style>
 </head>
 <body>
-<div id="demoBar" class="demo" hidden>示範模式（尚未設定 API_URL，資料只存在這台裝置的瀏覽器）</div>
+<div id="demoBar" class="demo" hidden>示範模式（尚未設定後端網址，資料只存在這台裝置）</div>
 <header><div class="wrap">
-  <div class="brand-sub">MRS. WANG · 手做水餃</div>
+  <div class="brand-sub">松義市集 · 手做水餃</div>
   <h1>王奶奶水餃團購</h1>
 </div></header>
 
@@ -171,7 +171,7 @@ const SLOTS=['16:00-17:00','17:00-18:00','18:00-19:00','19:00-20:00'];
 function demoDb(){
   let d; try{ d=JSON.parse(localStorage.getItem('wang_demo')); }catch(e){}
   if(!d){ const t=new Date(); t.setDate(t.getDate()+3);
-    d={settings:{shipDates:['2026-12-06'],isOpen:true,notice:'這是示範資料，設定 API_URL 後會換成真正的商品。'},
+    d={settings:{shipDates:['2026-12-06'],isOpen:true,notice:'這是示範資料，設定後端網址後會換成真正的商品。'},
        products:MENU_DEMO,orders:[]}; }
   if(!d.settings.shipDates) d.settings.shipDates = d.settings.shipDate ? [d.settings.shipDate] : [];
   return d;
